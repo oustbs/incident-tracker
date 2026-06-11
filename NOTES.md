@@ -46,3 +46,25 @@ It uses **Vitest** + **React Testing Library** and mocks `fetch` to verify:
 - A comment is submitted with the correct payload.
 - A success toast is triggered on success.
 - An error toast is triggered on failure.
+
+---
+
+## Bonus — Improvements Found in the Existing Code
+
+### 1. Error handling absent in BFF routes
+
+The original BFF GET routes (`/api/incidents`, `/api/incidents/[id]/comments`) did not check `res.ok`. If the backend returned a 404 or 503, the BFF would forward the error body with a **200 status**, making it impossible for the client to detect failures.
+
+Fixed by adding `if (!res.ok)` checks on all GET routes and forwarding the backend status code.
+
+Additionally, the PATCH route was silently returning 200 even on 409 `INVALID_STATUS_TRANSITION` errors. Fixed to forward the backend status so the client `onError` handler can catch it and show the correct toast.
+
+### 2. Next.js server-side cache on BFF fetch calls
+
+Next.js caches `fetch()` calls made in Server Components and Route Handlers by default (ISR/data cache). For a **real-time supervision dashboard**, serving stale incident data is a correctness issue.
+
+Fixed by adding `{ cache: 'no-store' }` to all BFF GET fetches so every request always hits the live backend.
+
+### 3. Page metadata
+
+The page title was still `"Create Next App"` (the Next.js default placeholder). Updated to `"Incident Tracker"` with a matching description.
