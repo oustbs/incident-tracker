@@ -10,7 +10,7 @@ export async function GET(_req: Request, { params }: RouteContext) {
   const baseUrl = process.env.API_BASE_URL;
 
   try {
-    const res = await fetch(`${baseUrl}/v1/incidents/${id}`);
+    const res = await fetch(`${baseUrl}/v1/incidents/${id}`, { cache: 'no-store' });
     if (!res.ok) {
       return NextResponse.json({ error: 'Incident not found' }, { status: 404 });
     }

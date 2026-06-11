@@ -14,7 +14,9 @@ export async function GET(req: Request, { params }: RouteContext) {
   const limit = searchParams.get('limit') || '20';
 
   try {
-    const res = await fetch(`${baseUrl}/v1/incidents/${id}/comments?page=${page}&limit=${limit}`);
+    const res = await fetch(`${baseUrl}/v1/incidents/${id}/comments?page=${page}&limit=${limit}`, {
+      cache: 'no-store',
+    });
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {

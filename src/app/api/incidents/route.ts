@@ -14,7 +14,11 @@ export async function GET(req: Request) {
   if (searchParams.get('siteCode')) params.set('siteCode', searchParams.get('siteCode')!);
 
   try {
-    const res = await fetch(`${baseUrl}/v1/incidents?${params.toString()}`);
+    // cache: 'no-store' ensures Next.js never caches incident data server-side.
+    // Serving stale incidents in a supervision dashboard would be a safety issue.
+    const res = await fetch(`${baseUrl}/v1/incidents?${params.toString()}`, {
+      cache: 'no-store',
+    });
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {
