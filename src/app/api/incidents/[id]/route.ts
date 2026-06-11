@@ -36,7 +36,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       body: JSON.stringify(body),
     });
     const data = await res.json();
-    return NextResponse.json(data);
+    // Forward the backend status code (e.g. 409 INVALID_STATUS_TRANSITION)
+    // so the client can handle it correctly instead of silently getting a 200.
+    return NextResponse.json(data, { status: res.status });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }

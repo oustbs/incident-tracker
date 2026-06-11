@@ -17,6 +17,10 @@ export async function GET(req: Request, { params }: RouteContext) {
     const res = await fetch(`${baseUrl}/v1/incidents/${id}/comments?page=${page}&limit=${limit}`, {
       cache: 'no-store',
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Backend error' }));
+      return NextResponse.json(err, { status: res.status });
+    }
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {

@@ -19,6 +19,10 @@ export async function GET(req: Request) {
     const res = await fetch(`${baseUrl}/v1/incidents?${params.toString()}`, {
       cache: 'no-store',
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Backend error' }));
+      return NextResponse.json(err, { status: res.status });
+    }
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {
